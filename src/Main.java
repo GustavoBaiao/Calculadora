@@ -1,82 +1,87 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-       Scanner sc = new Scanner(System.in);
 
-       Operacoes op = new Operacoes();
+        Scanner sc = new Scanner(System.in);
+        Operacoes op = new Operacoes();
 
-       int opcao = 9;
-       try {
-           while (opcao != 0){
-               System.out.println("========= Calculadora ==========");
-               System.out.print("Opções  \n" +
-                       "1- Soma \n" +
-                       "2- Subtração  \n" +
-                       "3- Multiplicação  \n" +
-                       "4- Divisão \n"+
-                       "0- Sair \n" +
-                       "Digite a opção desejada: " );
+        List<Conta> historico = new ArrayList<>();
 
-               opcao = sc.nextInt();
+        while (true) {
 
-               double resultado;
+            System.out.println("========= Calculadora ==========");
+            System.out.println("Digite uma expressão (ex: 5 * 3)");
+            System.out.println("Digite 'historico' para ver as contas");
+            System.out.println("Digite 'sair' para encerrar");
+            System.out.print("> ");
 
-               switch (opcao){
+            String entrada = sc.nextLine();
 
-                   case 1: {
-                       System.out.print("Digite o primeiro número: ");
-                       double n1 = sc.nextDouble();
-                       System.out.print("Digite o segundo número: ");
-                       double n2 = sc.nextDouble();
-                       resultado = op.soma(n1, n2);
-                       System.out.println("Resultado = " + resultado);
-                       break;
-                   }
-                   case 2: {
-                       System.out.print("Digite o primeiro número: ");
-                       double n1 = sc.nextDouble();
-                       System.out.print("Digite o segundo número: ");
-                       double n2 = sc.nextDouble();
-                       resultado = op.subtrai(n1, n2);
-                       System.out.println("Resultado = " + resultado);
-                       break;
-                   }
-                   case 3: {
-                       System.out.print("Digite o primeiro número: ");
-                       double n1 = sc.nextDouble();
-                       System.out.print("Digite o segundo número: ");
-                       double n2 = sc.nextDouble();
-                       resultado = op.multiplica(n1, n2);
-                       System.out.println("Resultado = " + resultado);
-                       break;
-                   }
-                   case 4: {
-                       System.out.print("Digite o primeiro número: ");
-                       double n1 = sc.nextDouble();
-                       System.out.print("Digite o segundo número: ");
-                       double n2 = sc.nextDouble();
-                       resultado = op.divide(n1, n2);
-                       System.out.println("Resultado = " + resultado);
-                       break;
-                   }
-                   case 0:
-                       System.out.println("Saindo");
-                       break;
-                   default:
-                       System.out.println("Opção invalida");
-                       return;
-               }
-           }
-       }catch (Exception e){
-           System.out.println("Entrada inválida. Por favor, digite apenas números.");
-           sc.nextLine();
-       }
-       sc.close();
+            if (entrada.equalsIgnoreCase("sair")) {
+                System.out.println("Programa encerrado.");
+                break;
+            }
 
+            if (entrada.equalsIgnoreCase("historico")) {
+                if (historico.isEmpty()) {
+                    System.out.println("Histórico vazio.");
+                } else {
+                    System.out.println("===== Histórico =====");
+                    for (Conta c : historico) {
+                        System.out.println(c);
+                    }
+                }
+                System.out.println();
+                continue;
+            }
+
+            try {
+                String[] partes = entrada.split(" ");
+
+                if (partes.length != 3) {
+                    System.out.println("Formato inválido. Use: número operador número");
+                    continue;
+                }
+
+                double n1 = Double.parseDouble(partes[0]);
+                String operador = partes[1];
+                double n2 = Double.parseDouble(partes[2]);
+
+                double resultado;
+
+                switch (operador) {
+                    case "+":
+                        resultado = op.soma(n1, n2);
+                        break;
+                    case "-":
+                        resultado = op.subtrai(n1, n2);
+                        break;
+                    case "*":
+                        resultado = op.multiplica(n1, n2);
+                        break;
+                    case "/":
+                        resultado = op.divide(n1, n2);
+                        break;
+                    default:
+                        System.out.println("Operador inválido.");
+                        continue;
+                }
+
+                Conta conta = new Conta(n1, n2, operador, resultado);
+                historico.add(conta);
+
+                System.out.println("Resultado: " + resultado);
+
+            } catch (Exception e) {
+                System.out.println("Erro na expressão. Verifique os valores digitados.");
+            }
+
+            System.out.println();
+        }
+
+        sc.close();
     }
 }
